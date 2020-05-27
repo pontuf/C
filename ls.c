@@ -1,3 +1,8 @@
+// Минимальный стандарт -- С99
+// Так как используется math.h, при компиляции может быть необходим ключ -lm
+// Например:
+// gcc ls.c -o ls -lm
+
 #include <math.h>
 #include <stdio.h>
 #include <locale.h>
