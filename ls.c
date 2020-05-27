@@ -328,8 +328,10 @@ int main(int argc, char *argv[]){
             else if (linkcol == 1)
                 printf("%d ", (long) sb.st_nlink);
         }
-        else if (sb.st_nlink == 1000)
-            printf("1K ");
+        else if (sb.st_nlink == 1000){
+        	shift(linkcol, 2);
+        	printf("1K ");	
+        } 
         else
             printf(">1K ");
         
