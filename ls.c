@@ -181,7 +181,7 @@ int main(int argc, char *argv[]){
 	opterr=0;
     while ((arg = getopt(argc,argv,"rlh")) != -1){
     	
-		switch (arg){
+	switch (arg){
             case 'l': table = 1; break;
             case 'r': reverse = 1; break;
             case 'h': hread = 1; break;
@@ -189,14 +189,14 @@ int main(int argc, char *argv[]){
                 printf("Wrong argument: -%c\n",optopt); 
                 return 1;
         }
-	}
+    }
 	
 	//если не режим -l, то просто вывод списка
 	//при том -r работает, а -h нет
 	if (!table){
-        simplelist(path, reverse);
-        return 0;
-    }
+            simplelist(path, reverse);
+            return 0;
+        }
     
     //РЕЖИМ -l
     struct dirent **eps;
