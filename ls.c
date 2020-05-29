@@ -178,10 +178,9 @@ int main(int argc, char *argv[]){
     
     // цикл взятия аргументов
     char arg = 0; 
-	opterr=0;
+    opterr=0;
     while ((arg = getopt(argc,argv,"rlh")) != -1){
-    	
-	switch (arg){
+        switch (arg){
             case 'l': table = 1; break;
             case 'r': reverse = 1; break;
             case 'h': hread = 1; break;
@@ -190,13 +189,13 @@ int main(int argc, char *argv[]){
                 return 1;
         }
     }
-	
-	//если не режим -l, то просто вывод списка
-	//при том -r работает, а -h нет
-	if (!table){
-            simplelist(path, reverse);
-            return 0;
-        }
+    
+    //если не режим -l, то просто вывод списка
+    //при том -r работает, а -h нет
+    if (!table){
+        simplelist(path, reverse);
+        return 0;
+    }
     
     //РЕЖИМ -l
     struct dirent **eps;
@@ -327,15 +326,15 @@ int main(int argc, char *argv[]){
         
         if (sb.st_nlink < 1000){
             if (linkcol == 3)
-                printf("%3d ", (long) sb.st_nlink);
+                printf("%3ld ", (long) sb.st_nlink);
             else if (linkcol == 2)
-                printf("%2d ", (long) sb.st_nlink);
+                printf("%2ld ", (long) sb.st_nlink);
             else if (linkcol == 1)
-                printf("%d ", (long) sb.st_nlink);
+                printf("%ld ", (long) sb.st_nlink);
         }
         else if (sb.st_nlink == 1000){
-        	shift(linkcol, 2);
-        	printf("1K ");	
+            shift(linkcol, 2);
+            printf("1K ");  
         } 
         else
             printf(">1K ");
@@ -383,6 +382,6 @@ int main(int argc, char *argv[]){
         
         puts(eps[cnt]->d_name);
     }
-	
-	return 0;
+    
+    return 0;
 }
