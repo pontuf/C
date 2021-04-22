@@ -15,16 +15,16 @@
 #include <time.h>
 
 //функция выбора для сортировки (в нашем случае выбирает всё)
-static int one(const struct dirent *unused){
+static int one(const struct dirent *unused) {
     return 1;
 }
 
 //функция проверки правильности пути
 //если неверный путь или не хватает прав, то выход с ошибкой
-char checkpath(char *arg){
+char checkpath(char *arg) {
     DIR *dp;
     dp = opendir(arg);
-    if (dp == NULL){
+    if (dp == NULL) {
         puts("ERROR! At the end of the command, the correct path to the directory was expected.\
         \nThere may not be permissions to this path.");
         return 1;
@@ -33,7 +33,7 @@ char checkpath(char *arg){
 }
 
 //функция вывода простого списка, если не было -l параметра
-char simplelist(char *arg, char rev){
+char simplelist(char *arg, char rev) {
     if (checkpath(arg))
         return 1; 
     
@@ -43,7 +43,7 @@ char simplelist(char *arg, char rev){
     n = scandir (arg, &eps, one, alphasort);
     if (n >= 0){
         int i = 0;
-        for (int cnt = 0; cnt < n; ++cnt){
+        for (int cnt = 0; cnt < n; ++cnt) {
             i = cnt;
             if (rev)
                 i = n - cnt - 1; // обратный порядок
@@ -58,7 +58,7 @@ char simplelist(char *arg, char rev){
 
 //функция формирования символьного представления прав
 //k -- указывает на тип прав, 4 -- владелец, 2 -- группа, 1 -- остальные
-char *getrights(char mask, char spec, char k){
+char *getrights(char mask, char spec, char k) {
     static char res[4];
     res[3] = '\0';
     
@@ -77,7 +77,7 @@ char *getrights(char mask, char spec, char k){
     
     // проверяем sticky бит и другие спец. биты
     // с помощью k
-    switch (k & spec){
+    switch (k & spec) {
         case 4:
         case 2:
             res[2] = 's';
@@ -90,7 +90,7 @@ char *getrights(char mask, char spec, char k){
 }
 
 //функция формирования полного пути из директории и названия файла
-char *fullpath(const char *dir, const char *name){
+char *fullpath(const char *dir, const char *name) {
     static char res[80];
     
     strcpy(res, dir);
@@ -104,7 +104,7 @@ char *fullpath(const char *dir, const char *name){
 
 // функция перевода размеров файлов
 // сама строка вывода в res, возвращается её длина
-char hsize(long long num, char *res){
+char hsize(long long num, char *res) {
     double frac = 0.0;
     char len = 1;
     char temp[8];
@@ -133,12 +133,12 @@ char hsize(long long num, char *res){
 }
 
 // функция сдвига для красивых границ столбцов
-void shift(char max, char cur){
+void shift(char max, char cur) {
     for (int i = 0; i < (max - cur); ++i)
         putchar(' ');
 }
 
-int main(int argc, char *argv[]){   
+int main(int argc, char *argv[]) {   
     // автоматический подбор локали
     setlocale(LC_ALL, "");
     
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]){
     char table = 0; // -l
     
     // нет аргументов
-    if (argc == 1){
+    if (argc == 1) {
         simplelist("./", reverse); // по текущей директории
         return 0;
     }
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]){
         }
     } 
     // только аргументы
-    else{
+    else {
         if (checkpath("./"))
             return 1;
         else
@@ -177,9 +177,9 @@ int main(int argc, char *argv[]){
     
     // цикл взятия аргументов
     char arg = 0; 
-    opterr=0;
-    while ((arg = getopt(argc,argv,"rlh")) != -1){
-        switch (arg){
+    opterr = 0;
+    while ((arg = getopt(argc,argv,"rlh")) != -1) {
+        switch (arg) {
             case 'l': table = 1; break;
             case 'r': reverse = 1; break;
             case 'h': hread = 1; break;
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]){
     
     //если не режим -l, то просто вывод списка
     //при том -r работает, а -h нет
-    if (!table){
+    if (!table) {
         simplelist(path, reverse);
         return 0;
     }
@@ -202,8 +202,8 @@ int main(int argc, char *argv[]){
     // получаем сортированный список файлов
     n = scandir (path, &eps, one, alphasort); 
     
-    if (n < 0){
-        puts("No files\n"); //
+    if (n < 0) {
+        puts("No files\n"); 
         return 1;
     }
     
@@ -222,11 +222,11 @@ int main(int argc, char *argv[]){
     time_t rawtime;
     time(&rawtime);                               
     short cyear = localtime(&rawtime)->tm_year; // текущий год
-    for (int i = 0; i < n; ++i){
+    for (int i = 0; i < n; ++i) {
         if (eps[i]->d_name[0] == '.')
             continue;
         
-        if (lstat(fullpath(path, eps[i]->d_name), &temp) == -1){
+        if (lstat(fullpath(path, eps[i]->d_name), &temp) == -1) {
             continue;
         }
         
@@ -287,7 +287,7 @@ int main(int argc, char *argv[]){
     struct stat sb;
     int cnt = 0;
     struct tm *time;
-    for (int j = 0; j < n; ++j){
+    for (int j = 0; j < n; ++j) {
         cnt = j;
         if (reverse)
             cnt = n - j - 1;
@@ -295,7 +295,7 @@ int main(int argc, char *argv[]){
         if (eps[cnt]->d_name[0] == '.')
             continue;
         
-        if (lstat(fullpath(path, eps[cnt]->d_name), &sb) == -1){
+        if (lstat(fullpath(path, eps[cnt]->d_name), &sb) == -1) {
             printf("? ");
             puts(eps[cnt]->d_name);
             continue;
@@ -323,7 +323,7 @@ int main(int argc, char *argv[]){
         printf("%s",getrights(groupbits,spec,2));
         printf("%s ",getrights(otherbits,spec,1));
         
-        if (sb.st_nlink < 1000){
+        if (sb.st_nlink < 1000) {
             if (linkcol == 3)
                 printf("%3ld ", (long) sb.st_nlink);
             else if (linkcol == 2)
@@ -331,7 +331,7 @@ int main(int argc, char *argv[]){
             else if (linkcol == 1)
                 printf("%ld ", (long) sb.st_nlink);
         }
-        else if (sb.st_nlink == 1000){
+        else if (sb.st_nlink == 1000) {
             shift(linkcol, 2);
             printf("1K ");  
         } 
