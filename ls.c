@@ -1,7 +1,3 @@
-// Так как используется math.h, при компиляции необходим ключ -lm
-// Например:
-// gcc ls.c -o ls -lm
-
 #include <math.h>
 #include <stdio.h>
 #include <locale.h>
@@ -29,6 +25,7 @@ char checkpath(char *arg) {
         \nThere may not be permissions to this path.");
         return 1;
     }
+
     return 0;
 }
 
@@ -39,9 +36,8 @@ char simplelist(char *arg, char rev) {
     
     struct dirent **eps;
     int n = 0;
-    
     n = scandir (arg, &eps, one, alphasort);
-    if (n >= 0){
+    if (n >= 0) {
         int i = 0;
         for (int cnt = 0; cnt < n; ++cnt) {
             i = cnt;
@@ -53,6 +49,7 @@ char simplelist(char *arg, char rev) {
         if (n > 2)
             putchar('\n');
     }
+
     return 0;
 }
 
@@ -86,25 +83,25 @@ char *getrights(char mask, char spec, char k) {
             res[2] = 't';
             break;
     }
+
     return res;
 }
 
 //функция формирования полного пути из директории и названия файла
 char *fullpath(const char *dir, const char *name) {
     static char res[80];
-    
+
     strcpy(res, dir);
-        
     if (res[strlen(res) - 1] != '/')
         strcat(res, "/");
     strcat(res, name);
-    
+
     return res;
 }
 
 // функция перевода размеров файлов
 // сама строка вывода в res, возвращается её длина
-char hsize(long long num, char *res) {
+char hsize(long long num, char *res){
     double frac = 0.0;
     char len = 1;
     char temp[8];
@@ -133,12 +130,12 @@ char hsize(long long num, char *res) {
 }
 
 // функция сдвига для красивых границ столбцов
-void shift(char max, char cur) {
+void shift(char max, char cur){
     for (int i = 0; i < (max - cur); ++i)
         putchar(' ');
 }
 
-int main(int argc, char *argv[]) {   
+int main(int argc, char *argv[]){   
     // автоматический подбор локали
     setlocale(LC_ALL, "");
     
@@ -150,7 +147,7 @@ int main(int argc, char *argv[]) {
     char table = 0; // -l
     
     // нет аргументов
-    if (argc == 1) {
+    if (argc == 1){
         simplelist("./", reverse); // по текущей директории
         return 0;
     }
@@ -159,13 +156,18 @@ int main(int argc, char *argv[]) {
         return simplelist(argv[argc-1], reverse);
     } 
     //путь и аргументы
-    else if (argc >= 3 && argv[argc-1][0] != '-'){
-        if (checkpath(argv[argc-1]))
-            return 1;
-        else{
-            --argc; 
-            path = argv[argc];
-        }
+    else if (argc >= 3) {
+        for (int i = 1; i < argc; ++i) {
+            if (argv[i][0] != '-') {
+                if (checkpath(argv[i]))
+                    return 1;
+                else {
+                    path = argv[i];
+                    argv[i] = argv[argc - 1];
+                    --argc;
+                }
+            }
+        } 
     } 
     // только аргументы
     else {
@@ -177,9 +179,10 @@ int main(int argc, char *argv[]) {
     
     // цикл взятия аргументов
     char arg = 0; 
-    opterr = 0;
-    while ((arg = getopt(argc,argv,"rlh")) != -1) {
-        switch (arg) {
+	opterr = 0;
+    while ((arg = getopt(argc,argv,"rlh")) != -1){
+    	
+		switch (arg){
             case 'l': table = 1; break;
             case 'r': reverse = 1; break;
             case 'h': hread = 1; break;
@@ -187,11 +190,11 @@ int main(int argc, char *argv[]) {
                 printf("Wrong argument: -%c\n",optopt); 
                 return 1;
         }
-    }
-    
-    //если не режим -l, то просто вывод списка
-    //при том -r работает, а -h нет
-    if (!table) {
+	}
+	
+	//если не режим -l, то просто вывод списка
+	//при том -r работает, а -h нет
+	if (!table){
         simplelist(path, reverse);
         return 0;
     }
@@ -202,8 +205,8 @@ int main(int argc, char *argv[]) {
     // получаем сортированный список файлов
     n = scandir (path, &eps, one, alphasort); 
     
-    if (n < 0) {
-        puts("No files\n"); 
+    if (n < 0){
+        puts("No files\n"); //
         return 1;
     }
     
@@ -222,11 +225,11 @@ int main(int argc, char *argv[]) {
     time_t rawtime;
     time(&rawtime);                               
     short cyear = localtime(&rawtime)->tm_year; // текущий год
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i){
         if (eps[i]->d_name[0] == '.')
             continue;
         
-        if (lstat(fullpath(path, eps[i]->d_name), &temp) == -1) {
+        if (lstat(fullpath(path, eps[i]->d_name), &temp) == -1){
             continue;
         }
         
@@ -287,7 +290,7 @@ int main(int argc, char *argv[]) {
     struct stat sb;
     int cnt = 0;
     struct tm *time;
-    for (int j = 0; j < n; ++j) {
+    for (int j = 0; j < n; ++j){
         cnt = j;
         if (reverse)
             cnt = n - j - 1;
@@ -295,7 +298,7 @@ int main(int argc, char *argv[]) {
         if (eps[cnt]->d_name[0] == '.')
             continue;
         
-        if (lstat(fullpath(path, eps[cnt]->d_name), &sb) == -1) {
+        if (lstat(fullpath(path, eps[cnt]->d_name), &sb) == -1){
             printf("? ");
             puts(eps[cnt]->d_name);
             continue;
@@ -323,18 +326,16 @@ int main(int argc, char *argv[]) {
         printf("%s",getrights(groupbits,spec,2));
         printf("%s ",getrights(otherbits,spec,1));
         
-        if (sb.st_nlink < 1000) {
+        if (sb.st_nlink < 1000){
             if (linkcol == 3)
-                printf("%3ld ", (long) sb.st_nlink);
+                printf("%3d ", (long) sb.st_nlink);
             else if (linkcol == 2)
-                printf("%2ld ", (long) sb.st_nlink);
+                printf("%2d ", (long) sb.st_nlink);
             else if (linkcol == 1)
-                printf("%ld ", (long) sb.st_nlink);
+                printf("%d ", (long) sb.st_nlink);
         }
-        else if (sb.st_nlink == 1000) {
-            shift(linkcol, 2);
-            printf("1K ");  
-        } 
+        else if (sb.st_nlink == 1000)
+            printf("1K ");
         else
             printf(">1K ");
         
@@ -381,6 +382,6 @@ int main(int argc, char *argv[]) {
         
         puts(eps[cnt]->d_name);
     }
-    
-    return 0;
+	
+	return 0;
 }
