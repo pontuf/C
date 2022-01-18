@@ -101,36 +101,36 @@ char *fullpath(const char *dir, const char *name) {
 
 // функция перевода размеров файлов
 // сама строка вывода в res, возвращается её длина
-char hsize(long long num, char *res){
+char hsize(long long num, char *res) {
     double frac = 0.0;
     char len = 1;
     char temp[8];
     
     if (num / 1099511627776) {
         frac = (double) num / 1099511627776;
-        len = sprintf(temp,"%.1fT", frac);
+        len = sprintf(temp, "%.1fT", frac);
     }
     else if (num / 1073741824) {
         frac = (double) num / 1073741824;
-        len = sprintf(temp,"%.1fG", frac);
+        len = sprintf(temp, "%.1fG", frac);
     }
     else if (num / 1048576) {
         frac = (double) num / 1048576;
-        len = sprintf(temp,"%.1fM", frac);
+        len = sprintf(temp, "%.1fM", frac);
     }
     else if (num / 1024) {
         frac = (double) num / 1024;
-        len = sprintf(temp,"%.1fk", frac);
+        len = sprintf(temp, "%.1fk", frac);
     }
     else 
-        len = sprintf(temp,"%lld", num);
+        len = sprintf(temp, "%lld", num);
     
     strcpy(res, temp);
     return len;
 }
 
 // функция сдвига для красивых границ столбцов
-void shift(char max, char cur){
+void shift(char max, char cur) {
     for (int i = 0; i < (max - cur); ++i)
         putchar(' ');
 }
@@ -180,21 +180,21 @@ int main(int argc, char *argv[]){
     // цикл взятия аргументов
     char arg = 0; 
 	opterr = 0;
-    while ((arg = getopt(argc,argv,"rlh")) != -1){
+    while ((arg = getopt(argc, argv, "rlh")) != -1) {
     	
-		switch (arg){
+		switch (arg) {
             case 'l': table = 1; break;
             case 'r': reverse = 1; break;
             case 'h': hread = 1; break;
             case '?': 
-                printf("Wrong argument: -%c\n",optopt); 
+                printf("Wrong argument: -%c\n", optopt); 
                 return 1;
         }
 	}
 	
 	//если не режим -l, то просто вывод списка
 	//при том -r работает, а -h нет
-	if (!table){
+	if (!table) {
         simplelist(path, reverse);
         return 0;
     }
@@ -205,8 +205,8 @@ int main(int argc, char *argv[]){
     // получаем сортированный список файлов
     n = scandir (path, &eps, one, alphasort); 
     
-    if (n < 0){
-        puts("No files\n"); //
+    if (n < 0) {
+        puts("No files\n");
         return 1;
     }
     
