@@ -229,7 +229,7 @@ int main(int argc, char *argv[]){
         if (eps[i]->d_name[0] == '.')
             continue;
         
-        if (lstat(fullpath(path, eps[i]->d_name), &temp) == -1){
+        if (lstat(fullpath(path, eps[i]->d_name), &temp) == -1) {
             continue;
         }
         
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]){
             linkcol = 3;
         else if (temp.st_nlink > 99 && temp.st_nlink < 1000)
             linkcol = 3;
-        else if (temp.st_nlink == 1000 || (temp.st_nlink > 9 && temp.st_nlink <= 99)){
+        else if (temp.st_nlink == 1000 || (temp.st_nlink > 9 && temp.st_nlink <= 99)) {
             if (linkcol < 2)
                 linkcol = 2;
         }
@@ -253,7 +253,7 @@ int main(int argc, char *argv[]){
         if (len > grcol)
             grcol = len;
         
-        if (hread){
+        if (hread) {
             len = hsize(temp.st_size, buf);
             if (len > sizecol)
                 sizecol = len;
@@ -290,7 +290,7 @@ int main(int argc, char *argv[]){
     struct stat sb;
     int cnt = 0;
     struct tm *time;
-    for (int j = 0; j < n; ++j){
+    for (int j = 0; j < n; ++j) {
         cnt = j;
         if (reverse)
             cnt = n - j - 1;
@@ -298,7 +298,7 @@ int main(int argc, char *argv[]){
         if (eps[cnt]->d_name[0] == '.')
             continue;
         
-        if (lstat(fullpath(path, eps[cnt]->d_name), &sb) == -1){
+        if (lstat(fullpath(path, eps[cnt]->d_name), &sb) == -1) {
             printf("? ");
             puts(eps[cnt]->d_name);
             continue;
@@ -322,11 +322,11 @@ int main(int argc, char *argv[]){
         char groupbits = (access / 8) % 8;
         char otherbits = access % 8;
         
-        printf("%s",getrights(userbits,spec,4));
-        printf("%s",getrights(groupbits,spec,2));
-        printf("%s ",getrights(otherbits,spec,1));
+        printf("%s", getrights(userbits,spec,4));
+        printf("%s", getrights(groupbits,spec,2));
+        printf("%s ", getrights(otherbits,spec,1));
         
-        if (sb.st_nlink < 1000){
+        if (sb.st_nlink < 1000) {
             if (linkcol == 3)
                 printf("%3d ", (long) sb.st_nlink);
             else if (linkcol == 2)
@@ -348,7 +348,7 @@ int main(int argc, char *argv[]){
         printf("%s ", group);
         
         char size;
-        if (hread){
+        if (hread) {
             shift(sizecol, hsize(sb.st_size, buf));
             printf("%s ", buf);
         }
@@ -372,7 +372,7 @@ int main(int argc, char *argv[]){
         
         year = time->tm_year;
         
-        if ((cyear - year) < 1){
+        if ((cyear - year) < 1) {
             printf("%02d:%02d ", time->tm_hour, time->tm_min);
         }
         else {
