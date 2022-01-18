@@ -106,19 +106,19 @@ char hsize(long long num, char *res){
     char len = 1;
     char temp[8];
     
-    if (num / 1099511627776){
+    if (num / 1099511627776) {
         frac = (double) num / 1099511627776;
         len = sprintf(temp,"%.1fT", frac);
     }
-    else if (num / 1073741824){
+    else if (num / 1073741824) {
         frac = (double) num / 1073741824;
         len = sprintf(temp,"%.1fG", frac);
     }
-    else if (num / 1048576){
+    else if (num / 1048576) {
         frac = (double) num / 1048576;
         len = sprintf(temp,"%.1fM", frac);
     }
-    else if (num / 1024){
+    else if (num / 1024) {
         frac = (double) num / 1024;
         len = sprintf(temp,"%.1fk", frac);
     }
