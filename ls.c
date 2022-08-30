@@ -20,6 +20,7 @@ static int one(const struct dirent *unused) {
 char checkpath(char *arg) {
     DIR *dp;
     dp = opendir(arg);
+
     if (dp == NULL) {
         puts("ERROR! At the end of the command, the correct path to the directory was expected.\
         \nThere may not be permissions to this path.");
@@ -31,23 +32,28 @@ char checkpath(char *arg) {
 
 //функция вывода простого списка, если не было -l параметра
 char simplelist(char *arg, char rev) {
-    if (checkpath(arg))
+    if (checkpath(arg)) {
         return 1; 
+    }
     
     struct dirent **eps;
     int n = 0;
     n = scandir (arg, &eps, one, alphasort);
+
     if (n >= 0) {
         int i = 0;
+
         for (int cnt = 0; cnt < n; ++cnt) {
-            i = cnt;
-            if (rev)
-                i = n - cnt - 1; // обратный порядок
-            if (eps[i]->d_name[0] != '.') 
+            i = (!rev) ? cnt : i = n - cnt - 1;
+
+            if (eps[i] != NULL && eps[i]->d_name != NULL && eps[i]->d_name[0] != '.') {
                 printf("%-s    ", eps[i]->d_name);
+            }
         }
-        if (n > 2)
+
+        if (n > 2) {
             putchar('\n');
+        }
     }
 
     return 0;
@@ -90,10 +96,12 @@ char *getrights(char mask, char spec, char k) {
 //функция формирования полного пути из директории и названия файла
 char *fullpath(const char *dir, const char *name) {
     static char res[80];
-
     strcpy(res, dir);
-    if (res[strlen(res) - 1] != '/')
+
+    if (res[strlen(res) - 1] != '/') {
         strcat(res, "/");
+    }
+
     strcat(res, name);
 
     return res;
@@ -131,11 +139,12 @@ char hsize(long long num, char *res) {
 
 // функция сдвига для красивых границ столбцов
 void shift(char max, char cur) {
-    for (int i = 0; i < (max - cur); ++i)
+    for (int i = 0; i < (max - cur); ++i) {
         putchar(' ');
+    }
 }
 
-int main(int argc, char *argv[]){   
+int main(int argc, char *argv[]) {   
     // автоматический подбор локали
     setlocale(LC_ALL, "");
     
@@ -147,21 +156,21 @@ int main(int argc, char *argv[]){
     char table = 0; // -l
     
     // нет аргументов
-    if (argc == 1){
+    if (argc == 1) {
         simplelist("./", reverse); // по текущей директории
         return 0;
     }
     //только путь
-    else if (argc == 2 && argv[argc-1][0] != '-'){
+    else if (argc == 2 && argv[argc-1][0] != '-') {
         return simplelist(argv[argc-1], reverse);
     } 
     //путь и аргументы
     else if (argc >= 3) {
         for (int i = 1; i < argc; ++i) {
             if (argv[i][0] != '-') {
-                if (checkpath(argv[i]))
+                if (checkpath(argv[i])) {
                     return 1;
-                else {
+                } else {
                     path = argv[i];
                     argv[i] = argv[argc - 1];
                     --argc;
@@ -171,17 +180,18 @@ int main(int argc, char *argv[]){
     } 
     // только аргументы
     else {
-        if (checkpath("./"))
+        if (checkpath("./")) {
             return 1;
-        else
+        } else {
             path = "./"; // по текущей директории
+        }
     }
     
     // цикл взятия аргументов
     char arg = 0; 
 	opterr = 0;
+
     while ((arg = getopt(argc, argv, "rlh")) != -1) {
-    	
 		switch (arg) {
             case 'l': table = 1; break;
             case 'r': reverse = 1; break;
@@ -225,9 +235,11 @@ int main(int argc, char *argv[]){
     time_t rawtime;
     time(&rawtime);                               
     short cyear = localtime(&rawtime)->tm_year; // текущий год
-    for (int i = 0; i < n; ++i){
-        if (eps[i]->d_name[0] == '.')
+
+    for (int i = 0; i < n; ++i) {
+        if (eps[i]->d_name[0] == '.') {
             continue;
+        }
         
         if (lstat(fullpath(path, eps[i]->d_name), &temp) == -1) {
             continue;
@@ -236,67 +248,84 @@ int main(int argc, char *argv[]){
         //расчет total blocks
         total += temp.st_blocks / 2; // блоки по 512 Кб
         
-        if (temp.st_nlink > 1000)
+        if (temp.st_nlink > 1000) {
             linkcol = 3;
-        else if (temp.st_nlink > 99 && temp.st_nlink < 1000)
+        } else if (temp.st_nlink > 99 && temp.st_nlink < 1000) {
             linkcol = 3;
-        else if (temp.st_nlink == 1000 || (temp.st_nlink > 9 && temp.st_nlink <= 99)) {
-            if (linkcol < 2)
+        } else if (temp.st_nlink == 1000 || (temp.st_nlink > 9 && temp.st_nlink <= 99)) {
+            if (linkcol < 2) {
                 linkcol = 2;
+            }
         }
         
         len = strlen(getpwuid(temp.st_uid)->pw_name);
-        if (len > uscol)
+
+        if (len > uscol) {
             uscol = len;
+        }
         
         len = strlen(getgrgid(temp.st_gid)->gr_name);
-        if (len > grcol)
+
+        if (len > grcol) {
             grcol = len;
+        }
         
         if (hread) {
             len = hsize(temp.st_size, buf);
-            if (len > sizecol)
+
+            if (len > sizecol) {
                 sizecol = len;
-        }
-        else {
-            if (temp.st_size <= 0)
+            }
+        } else {
+            if (temp.st_size <= 0) {
                 len = 0;
-            else
+            } else {
                 len = (int) floor(log10((double) temp.st_size));
-            if (len > sizecol)
+            }
+
+            if (len > sizecol) {
                 sizecol = len;
+            }
         }
         
-        if (localtime(&temp.st_mtime)->tm_mday > 9 && dcol == 1)
+        if (localtime(&temp.st_mtime)->tm_mday > 9 && dcol == 1) {
             dcol = 2;
+        }
         
         year = localtime(&temp.st_mtime)->tm_year;
-        if ((cyear - year) < 1)
+
+        if ((cyear - year) < 1) {
             timecol = 5;
+        }
     }
     
     //вывод total blocks перед самой таблицей
     char totalstr[8];
-    if (hread){
+
+    if (hread) {
         //функция обычно работает с байтами размеров файлов, но блоки в Килобайтах,
         //поэтому домножим
         hsize(total * 1024, totalstr); 
         printf("total %s\n", totalstr);
-    }
-    else
+    } else {
         printf("total %lld\n", (long long) total);
+    }
     
     //ОСНОВНОЙ ЦИКЛ ВЫВОДА ТАБЛИЦЫ
     struct stat sb;
     int cnt = 0;
     struct tm *time;
+
     for (int j = 0; j < n; ++j) {
         cnt = j;
-        if (reverse)
+
+        if (reverse) {
             cnt = n - j - 1;
+        }
         
-        if (eps[cnt]->d_name[0] == '.')
+        if (eps[cnt]->d_name[0] == '.') {
             continue;
+        }
         
         if (lstat(fullpath(path, eps[cnt]->d_name), &sb) == -1) {
             printf("? ");
