@@ -44,7 +44,7 @@ char simplelist(char *arg, char rev) {
         int i = 0;
 
         for (int cnt = 0; cnt < n; ++cnt) {
-            i = (!rev) ? cnt : i = n - cnt - 1;
+            i = (!rev) ? cnt : n - cnt - 1;
 
             if (eps[i] != NULL && eps[i]->d_name != NULL && eps[i]->d_name[0] != '.') {
                 printf("%-s    ", eps[i]->d_name);
